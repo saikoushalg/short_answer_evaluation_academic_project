@@ -2,4 +2,4 @@ pandas
 streamlit
 scikit-learn
 transformers
-sentence_trasnformers
+sentence_transformers
