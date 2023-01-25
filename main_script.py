@@ -1,7 +1,4 @@
 import streamlit as st
-
-import yaml
-
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
