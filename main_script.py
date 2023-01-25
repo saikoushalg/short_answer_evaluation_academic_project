@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit_authenticator as stauth
+
 import yaml
 
 import pandas as pd
@@ -52,40 +52,40 @@ def stinit():
             # st.write("The similarity score is: ", round(result[0][0], 1))
 
 
-hashed_passwords = stauth.Hasher(['admin', 'lorem']).generate()
-with open('config.yaml') as file:
-    config = yaml.load(file, Loader=yaml.SafeLoader)
+# hashed_passwords = stauth.Hasher(['admin', 'lorem']).generate()
+# with open('config.yaml') as file:
+#     config = yaml.load(file, Loader=yaml.SafeLoader)
 
-option = st.sidebar.selectbox(
-    'Login/SignUp',
-    ('Login', 'SignUp'))
+# option = st.sidebar.selectbox(
+#     'Login/SignUp',
+#     ('Login', 'SignUp'))
 
-authenticator = stauth.Authenticate(
-    config['credentials'],
-    config['cookie']['name'],
-    config['cookie']['key'],
-    config['cookie']['expiry_days'],
-    config['preauthorized'])
+# authenticator = stauth.Authenticate(
+#     config['credentials'],
+#     config['cookie']['name'],
+#     config['cookie']['key'],
+#     config['cookie']['expiry_days'],
+#     config['preauthorized'])
 
-if option == "Login":
+# if option == "Login":
 
-    name, authentication_status, username = authenticator.login(
-        'Login', 'main')
-    if st.session_state["authentication_status"]:
-        authenticator.logout('Logout', 'main')
+#     name, authentication_status, username = authenticator.login(
+#         'Login', 'main')
+#     if st.session_state["authentication_status"]:
+#         authenticator.logout('Logout', 'main')
 
-        stinit()
-    elif st.session_state["authentication_status"] == False:
-        st.error('Username/password is incorrect')
-    elif st.session_state["authentication_status"] == None:
-        st.warning('Please enter your username and password')
+#         stinit()
+#     elif st.session_state["authentication_status"] == False:
+#         st.error('Username/password is incorrect')
+#     elif st.session_state["authentication_status"] == None:
+#         st.warning('Please enter your username and password')
 
-if option == "SignUp":
-    try:
-        if authenticator.register_user('Register user', preauthorization=True):
-            st.success('User registered successfully, you can login now')
+# if option == "SignUp":
+#     try:
+#         if authenticator.register_user('Register user', preauthorization=True):
+#             st.success('User registered successfully, you can login now')
 
-            with open('config.yaml', 'w') as file:
-                yaml.dump(config, file, default_flow_style=False)
-    except Exception as e:
-        st.error(e)
+#             with open('config.yaml', 'w') as file:
+#                 yaml.dump(config, file, default_flow_style=False)
+#     except Exception as e:
+#         st.error(e)
