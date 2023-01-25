@@ -1,0 +1,17 @@
+cookie:
+  expiry_days: 30
+  key: abcdefghij
+  name: auth_pwds
+credentials:
+  usernames:
+    admin:
+      email: admintest@gmail.com
+      name: admin
+      password: $2b$12$gLJ2rt8qrWhpmxHtHwNg7e6iXDV8ouHX76NpuAgTTM8mMWRMI8mb.
+    lorem:
+      email: lorem@gmail.com
+      name: lorem
+      password: $2b$12$5Zx.vn8X4rd7TVIbrjm5huAflIvfOV7EL1YFBVjA9VO4DGN88dkfS
+preauthorized:
+  emails:
+    - testuser@gmail.com
