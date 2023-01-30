@@ -2,13 +2,12 @@ import streamlit as st
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
-
-
+import yaml
+import streamlit_authenticator as stauth
 st.write("# Autograder")
 
 
 ans_arr = []
-model = SentenceTransformer('bert-base-nli-mean-tokens')
 
 
 def stinit():
@@ -37,52 +36,41 @@ def stinit():
 
         submit = st.form_submit_button("Submit")
 
-    if submit:
-        ans_embed = model.encode(ans_arr)
-        result = cosine_similarity([ans_embed[0]], ans_embed[1:])
-        if option == 'percentage score (%)':
-            st.write("The Score is: ", round(
-                ((result[0][0]*num)/num)*100, 2), "%")
-            # st.write("The similarity score is: ", round(result[0][0], 1))
-        elif option == 'out of grade(number) ex:(/100)':
-            st.write("The Score is: ", round(result[0][0]*num, 2))
-            # st.write("The similarity score is: ", round(result[0][0], 1))
 
+hashed_passwords = stauth.Hasher(['admin', 'lorem']).generate()
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=yaml.SafeLoader)
 
-# hashed_passwords = stauth.Hasher(['admin', 'lorem']).generate()
-# with open('config.yaml') as file:
-#     config = yaml.load(file, Loader=yaml.SafeLoader)
+option = st.sidebar.selectbox(
+    'Login/SignUp',
+    ('Login', 'SignUp'))
 
-# option = st.sidebar.selectbox(
-#     'Login/SignUp',
-#     ('Login', 'SignUp'))
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days'],
+    config['preauthorized'])
 
-# authenticator = stauth.Authenticate(
-#     config['credentials'],
-#     config['cookie']['name'],
-#     config['cookie']['key'],
-#     config['cookie']['expiry_days'],
-#     config['preauthorized'])
+if option == "Login":
 
-# if option == "Login":
+    name, authentication_status, username = authenticator.login(
+        'Login', 'main')
+    if st.session_state["authentication_status"]:
+        authenticator.logout('Logout', 'main')
 
-#     name, authentication_status, username = authenticator.login(
-#         'Login', 'main')
-#     if st.session_state["authentication_status"]:
-#         authenticator.logout('Logout', 'main')
+        stinit()
+    elif st.session_state["authentication_status"] == False:
+        st.error('Username/password is incorrect')
+    elif st.session_state["authentication_status"] == None:
+        st.warning('Please enter your username and password')
 
-#         stinit()
-#     elif st.session_state["authentication_status"] == False:
-#         st.error('Username/password is incorrect')
-#     elif st.session_state["authentication_status"] == None:
-#         st.warning('Please enter your username and password')
+if option == "SignUp":
+    try:
+        if authenticator.register_user('Register user', preauthorization=True):
+            st.success('User registered successfully, you can login now')
 
-# if option == "SignUp":
-#     try:
-#         if authenticator.register_user('Register user', preauthorization=True):
-#             st.success('User registered successfully, you can login now')
-
-#             with open('config.yaml', 'w') as file:
-#                 yaml.dump(config, file, default_flow_style=False)
-#     except Exception as e:
-#         st.error(e)
+            with open('config.yaml', 'w') as file:
+                yaml.dump(config, file, default_flow_style=False)
+    except Exception as e:
+        st.error(e)

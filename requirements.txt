@@ -1,5 +1,0 @@
-pandas
-streamlit
-scikit-learn
-transformers
-sentence_transformers
