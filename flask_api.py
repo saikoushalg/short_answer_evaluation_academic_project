@@ -1,10 +1,3 @@
-from transformers import BertTokenizer, BertForSequenceClassification
-from flask import Flask, jsonify, request
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-
-
-model = SentenceTransformer('bert-base-nli-mean-tokens')
 
 
 def find_similarity(sentence1, sentence2):
