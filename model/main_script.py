@@ -1,13 +1,16 @@
 import streamlit as st
+import streamlit_authenticator as stauth
+import yaml
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sentence_transformers import SentenceTransformer
-import yaml
-import streamlit_authenticator as stauth
+
+
 st.write("# Autograder")
 
 
 ans_arr = []
+model = SentenceTransformer('bert-base-nli-mean-tokens')
 
 
 def stinit():
@@ -35,6 +38,17 @@ def stinit():
         num = st.number_input('please enter the maximum marks:')
 
         submit = st.form_submit_button("Submit")
+
+    if submit:
+        ans_embed = model.encode(ans_arr)
+        result = cosine_similarity([ans_embed[0]], ans_embed[1:])
+        if option == 'percentage score (%)':
+            st.write("The Score is: ", round(
+                ((result[0][0]*num)/num)*100, 2), "%")
+            # st.write("The similarity score is: ", round(result[0][0], 1))
+        elif option == 'out of grade(number) ex:(/100)':
+            st.write("The Score is: ", round(result[0][0]*num, 2))
+            # st.write("The similarity score is: ", round(result[0][0], 1))
 
 
 hashed_passwords = stauth.Hasher(['admin', 'lorem']).generate()
